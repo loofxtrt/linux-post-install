@@ -8,7 +8,6 @@ install_software_via_pacman() {
         firefox \
         obsidian \
         discord \
-        spicetify-cli \
         bitwarden \
         wine
     

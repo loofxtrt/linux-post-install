@@ -7,7 +7,8 @@ install_software_via_yay() {
         libresprite \
         sklauncher-bin \
         fspy \
-        beeref
+        beeref \
+        spicetify-cli
 }
 
 # comente essa linha caso o script vá rodar automaticamente
