@@ -1,7 +1,7 @@
 #!/bin/bash
 
 set -e # parar caso algum erro aconteça
-sudo pacman -Syu # atualizar o sistema e as packages pela primeira vez
+sudo pacman -Syu --noconfirm # atualizar o sistema e as packages pela primeira vez
 
 install_basics() {
     echo "Now installing basic software"
@@ -15,14 +15,14 @@ install_basics() {
     # make: ferramenta de automação de compilação (já vem no base-devel, mas só pra garantir)
     # gcc: compilador C/C++ (também parte do base-devel)
     # --needed faz com o que pacman instale apenas os softwares que ainda NÃO existem no sistema, evitando reinstalações desnecessárias
-    sudo pacman -S base-devel git wget unzip ripgrep make gcc --needed
+    sudo pacman -S --needed base-devel git wget unzip ripgrep make gcc
 }
 
 install_managers() {
     install_flatpak() {
         echo "Now installing packman"
 
-        sudo pacman -S flatpak
+        sudo pacman -S --needed flatpak
         flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo # adicionar o repositório do flatpak ao sistema
     }
     
@@ -36,6 +36,7 @@ install_managers() {
             cd yay
             makepkg -si
             cd ..
+            rm -rf yay
         fi
     }
 
@@ -61,7 +62,7 @@ install_software_via_flatpak() {
 install_software_via_pacman() {
     echo "Now installing software via pacman"
 
-    sudo pacman -S \
+    sudo pacman -S --needed \
         firefox \
         audacity \
         krita \
@@ -80,13 +81,12 @@ install_software_via_pacman() {
         openjdk21 \
         python \
         lua
-        --needed
 }
 
 install_software_via_yay() {
     echo "Now installing software via yay"
 
-    yay -S \
+    yay -S --needed \
         btop \
         vscodium-bin \
         libresprite
