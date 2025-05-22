@@ -14,9 +14,10 @@ install_basics() {
     # make:
     # make: ferramenta de automação de compilação (já vem no base-devel, mas só pra garantir)
     # gcc: compilador C/C++ (também parte do base-devel)
+    # fakeroot: utilitário pra empacotar software com segurança sem precisar de privilégios de root
     # --needed faz com o que pacman instale apenas os softwares que ainda NÃO existem no sistema, evitando reinstalações desnecessárias
     echo "Instalando software básico"
-    sudo pacman -S --needed base-devel git wget unzip ripgrep make gcc
+    sudo pacman -S --needed base-devel git wget unzip ripgrep make gcc fakeroot
 }
 
 # essa função deve ser rodada antes de qualquer outra que instale algum software por um manager
@@ -61,11 +62,13 @@ install_software_via_flatpak() {
 
 install_software_via_pacman() {
     echo "Instalando software via pacman"
+    echo "pacman --- Instalando software geral"
     sudo pacman -S --needed \
         firefox \
         obsidian \
         discord \
         spicetify-cli \
+        bitwarden \
         wine
     
     creation_related() {
@@ -97,15 +100,19 @@ install_software_via_pacman() {
             btop \
             hyfetch
     }
+
+    creation_related
+    programming_related
+    command_line
 }
 
 install_software_via_yay() {
     echo "Instalando software via yay"
     yay -S --needed \
-        btop \
         vscodium-bin \
         libresprite \
         sklauncher-bin \
+        fspy \
         beeref
 }
 
@@ -141,22 +148,6 @@ setup_steam_installation() {
     install_steam
 }
 
-# essa função deve sempre ser rodada só no final, depois de todos os softwares terem sido instalados
-test_versions_all() {
-    xtrlock --version
-    btop --version
-    hyfetch --version
-}
-
-install_basics
-install_managers
-install_software_via_flatpak
-install_software_via_pacman
-install_software_via_yay
-install_command_line_software
-setup_steam_installation
-test_versions_all
-
 # função opcional que não é chamada por padrão no script
 install_secondary_software() {
     echo "Instando software secundário via qualquer manager"
@@ -168,3 +159,14 @@ install_secondary_software() {
     yay -S \
         firefox-nightly-bin
 }
+
+main() {
+    install_basics
+    install_managers
+    install_software_via_flatpak
+    install_software_via_pacman
+    install_software_via_yay
+    setup_steam_installation
+}
+
+main "$@"
