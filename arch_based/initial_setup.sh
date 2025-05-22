@@ -21,15 +21,16 @@ install_basics() {
 }
 
 # importar funções de outros arquivos
-source ./optional.sh
 source ./managers.sh
+source ./secondary.sh
+source ./setup_steam.sh
 source ./via_flatpak.sh
 source ./via_pacman.sh
 source ./via_yay.sh
-source ./setup_steam.sh
 
 # descomente as linhas com '#' pra que elas sejam rodadas automaticamente
 # elas podem ser rodadas individualmente por terem uma hashbang (#!/bin/bash) no topo do arquivo
+# o que é útil pra ter mais controle sobre quais comandos estão sendo executados e quando
 main() {
     install_basics
     install_managers
@@ -37,6 +38,7 @@ main() {
     #install_software_via_pacman
     #install_software_via_yay
     #setup_steam_installation
+    #install_secondary_software
 }
 
 main "$@"
