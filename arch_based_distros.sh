@@ -63,23 +63,40 @@ install_software_via_pacman() {
     echo "Instalando software via pacman"
     sudo pacman -S --needed \
         firefox \
-        audacity \
-        krita \
-        qt5-tools \
-        neovim \
-        kvantum \
-        blender \
-        godot \
-        gimp \
         obsidian \
         discord \
-        spotify-launcher \
-        obs-studio \
-        wine \
-        reaper \
-        openjdk21 \
-        python \
-        lua
+        spicetify-cli \
+        wine
+    
+    creation_related() {
+        echo "pacman --- Instalando software relacionado à criação"
+        sudo pacman -S --needed \
+            audacity \
+            krita \
+            blender \
+            gimp \
+            obs-studio \
+            reaper
+    }
+
+    programming_related() {
+        echo "pacman --- Instalando software relacionado à programação"
+        sudo pacman -S --needed \
+            qt5-tools \
+            godot \
+            neovim \
+            openjdk21 \
+            python \
+            lua
+    }
+    
+    command_line() {
+        echo "pacman --- Instalando software de linha de comando"
+        sudo pacman -S --needed \
+            xtrlock \
+            btop \
+            hyfetch
+    }
 }
 
 install_software_via_yay() {
@@ -92,6 +109,8 @@ install_software_via_yay() {
         beeref
 }
 
+# a steam precisa de alguns ajustes pra ser instalada pelo pacman
+# essa função faz esses ajustes nas configurações do pacman e instala mais utils pra steam
 setup_steam_installation() {
     enable_multilib_repository() {
         echo "Habilitando o repositório multilib no pacman.conf"
@@ -122,11 +141,11 @@ setup_steam_installation() {
     install_steam
 }
 
-# função opcional que não é chamada por padrão no script
-install_secondary_software() {
-    echo "Instando software secundário via qualquer manager"
-    sudo pacman -S firefox-developer-edition
-    yay -S firefox-nightly-bin
+# essa função deve sempre ser rodada só no final, depois de todos os softwares terem sido instalados
+test_versions_all() {
+    xtrlock --version
+    btop --version
+    hyfetch --version
 }
 
 install_basics
@@ -134,4 +153,18 @@ install_managers
 install_software_via_flatpak
 install_software_via_pacman
 install_software_via_yay
+install_command_line_software
 setup_steam_installation
+test_versions_all
+
+# função opcional que não é chamada por padrão no script
+install_secondary_software() {
+    echo "Instando software secundário via qualquer manager"
+    
+    sudo pacman -S \
+        firefox-developer-edition \
+        kvantum
+    
+    yay -S \
+        firefox-nightly-bin
+}
