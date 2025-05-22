@@ -28,7 +28,6 @@ install_software_via_pacman() {
             qt5-tools \
             godot \
             neovim \
-            openjdk21 \
             python \
             lua
     }
