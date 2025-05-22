@@ -1,0 +1,11 @@
+#!/bin/bash
+
+install_software_via_yay() {
+    echo "Instalando software via yay"
+    yay -S --needed \
+        vscodium-bin \
+        libresprite \
+        sklauncher-bin \
+        fspy \
+        beeref
+}
