@@ -1,8 +1,8 @@
 #!/bin/bash
 
-set -e # parar caso algum erro aconteça
+set -e # parar o script caso algum erro aconteça
 
-echo "Updating system before installing packages"
+echo "Atualizando o sistema antes de instalar packages"
 sudo pacman -Syu --noconfirm # atualizar o sistema e as packages pela primeira vez
 
 install_basics() {
@@ -15,22 +15,26 @@ install_basics() {
     # make: ferramenta de automação de compilação (já vem no base-devel, mas só pra garantir)
     # gcc: compilador C/C++ (também parte do base-devel)
     # --needed faz com o que pacman instale apenas os softwares que ainda NÃO existem no sistema, evitando reinstalações desnecessárias
-    echo "Installing basic software"
+    echo "Instalando software básico"
     sudo pacman -S --needed base-devel git wget unzip ripgrep make gcc
 }
 
+# essa função deve ser rodada antes de qualquer outra que instale algum software por um manager
+# que não seja o pacman, ou seja, que não venha por padrão na maioria das distros baseadas no arch
 install_managers() {
     install_flatpak() {
-        echo "Installing flatpak"
+        echo "Instalando o manager flatpak"
         sudo pacman -S --needed flatpak
         flatpak remote-add --if-not-exists flathub https://flathub.org/repo/flathub.flatpakrepo # adicionar o repositório do flatpak ao sistema
     }
     
+    # o yay é um helper pra facilitar a instalação de packages do aur
+    # ele busca, compila e instala os arquivos vindos do repositório
     install_yay() {
         # testar se o comando yay já existe ou não
         # se não exsitr, clona o repositório do yay, entra no diretório novo, compila e depois volta
         if ! command -v yay &> /dev/null; then
-            echo "Installing yay"
+            echo "Instalando o manager yay"
             git clone https://aur.archlinux.org/yay.git
             cd yay
             makepkg -si
@@ -44,7 +48,7 @@ install_managers() {
 }
 
 install_software_via_flatpak() {
-    echo "Installing software via flatpak"
+    echo "Instalando software via flatpak"
     flatpak install -y flathub \
         org.kde.kdenlive \
         com.kristianduske.TrenchBroom \
@@ -52,13 +56,11 @@ install_software_via_flatpak() {
         net.blockbench.Blockbench \
         net.lutris.Lutris \
         com.github.tchx84.Flatseal \
-        com.valvesoftware.Steam \
-        com.usebottles.bottles \
-        com.github.beeRef.BeeRef
+        com.usebottles.bottles
 }
 
 install_software_via_pacman() {
-    echo "Installing software via pacman"
+    echo "Instalando software via pacman"
     sudo pacman -S --needed \
         firefox \
         audacity \
@@ -74,18 +76,57 @@ install_software_via_pacman() {
         spotify-launcher \
         obs-studio \
         wine \
+        reaper \
         openjdk21 \
         python \
         lua
 }
 
 install_software_via_yay() {
-    echo "Installing software via yay"
+    echo "Instalando software via yay"
     yay -S --needed \
         btop \
         vscodium-bin \
         libresprite \
-        sklauncher-bin
+        sklauncher-bin \
+        beeref
+}
+
+setup_steam_installation() {
+    enable_multilib_repository() {
+        echo "Habilitando o repositório multilib no pacman.conf"
+
+        # fazer backup do arquivo original
+        sudo cp /etc/pacman.conf /etc/pacman.conf.bak
+
+        # remover o '#' da linha [multilib] e da linha Include logo abaixo, descomentando elas
+        sudo sed -i '/^\s*#\[multilib\]/s/^#//' /etc/pacman.conf
+        sudo sed -i '/^\s*#Include = \/etc\/pacman.d\/mirrorlist/s/^#//' /etc/pacman.conf
+
+        echo "Repositório multilib habilitado"
+    }
+
+    install_steam() {
+        echo "Instalando a Steam e bibliotecas de 32 bits"
+
+        sudo pacman -S --needed steam lib32-mesa lib32-alsa-plugins lib32-libpulse
+
+        # se o hardware for da nvidia, instala a lib32 dos drivers também (opcional)
+        if lspci | grep -i nvidia &> /dev/null; then
+            echo "Instalando lib32-nvidia-utils pra hardware da NVIDIA"
+            sudo pacman -S --needed lib32-nvidia-utils
+        fi
+    }
+
+    enable_multilib_repository
+    install_steam
+}
+
+# função opcional que não é chamada por padrão no script
+install_secondary_software() {
+    echo "Instando software secundário via qualquer manager"
+    sudo pacman -S firefox-developer-edition
+    yay -S firefox-nightly-bin
 }
 
 install_basics
@@ -93,3 +134,4 @@ install_managers
 install_software_via_flatpak
 install_software_via_pacman
 install_software_via_yay
+setup_steam_installation
