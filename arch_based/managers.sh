@@ -27,3 +27,6 @@ install_managers() {
     install_flatpak
     install_yay
 }
+
+# comente essa linha caso o script vá rodar automaticamente
+#install_managers

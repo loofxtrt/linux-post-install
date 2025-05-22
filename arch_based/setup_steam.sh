@@ -31,3 +31,6 @@ setup_steam_installation() {
     enable_multilib_repository
     install_steam
 }
+
+# comente essa linha caso o script vá rodar automaticamente
+setup_steam_installation

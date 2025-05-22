@@ -10,3 +10,6 @@ install_secondary_software() {
     yay -S \
         firefox-nightly-bin
 }
+
+# comente essa linha caso o script vá rodar automaticamente
+install_secondary_software

@@ -46,3 +46,6 @@ install_software_via_pacman() {
     programming_related
     command_line
 }
+
+# comente essa linha caso o script vá rodar automaticamente
+install_software_via_pacman

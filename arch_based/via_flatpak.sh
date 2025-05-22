@@ -11,3 +11,6 @@ install_software_via_flatpak() {
         com.github.tchx84.Flatseal \
         com.usebottles.bottles
 }
+
+# comente essa linha caso o script vá rodar automaticamente
+install_software_via_flatpak
